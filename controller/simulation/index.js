@@ -1,10 +1,10 @@
 let { getTime } = require("../../utils/getTime");
 module.exports = function (app, connection) {
-  // 获取章节列表
-  app.post("/chaptersList", function (req, res) {
+  // 获取模拟列表
+  app.post("/simulationList", function (req, res) {
     let grade = req.body.grade;
     connection.query(
-      `select * from Chapters where grade='${grade}';`,
+      `select * from Simulation where grade='${grade}';`,
       function (err, results) {
         return res.send({
           status: 200,
@@ -15,12 +15,12 @@ module.exports = function (app, connection) {
     );
   });
 
-  // 添加章节
-  app.post("/addChapter", function (req, res) {
+  // 添加模拟
+  app.post("/addSimulation", function (req, res) {
     let grade = req.body.grade;
     let name = req.body.name;
     connection.query(
-      `INSERT INTO Chapters(create_time,grade,name) VALUES('${getTime()}','${grade}','${name}');`,
+      `INSERT INTO Simulation(create_time,grade,name) VALUES('${getTime()}','${grade}','${name}');`,
       function (err, results) {
         return res.send({
           status: 200,
@@ -31,12 +31,12 @@ module.exports = function (app, connection) {
     );
   });
 
-  // 编辑章节名称
-  app.post("/editChapterName", function (req, res) {
+  // 编辑模拟名称
+  app.post("/editSimulationName", function (req, res) {
     let id = req.body.id;
     let name = req.body.name;
     connection.query(
-      `update Chapters set name='${name}' where id='${id}';`,
+      `update Simulation set name='${name}' where id='${id}';`,
       function (err, results) {
         return res.send({
           status: 200,
@@ -47,11 +47,11 @@ module.exports = function (app, connection) {
     );
   });
 
-  // 获取章节下的题目
-  app.post("/queryChapterQuestions", function (req, res) {
-    let zjid = req.body.zjid;
+  // 获取模拟下的题目
+  app.post("/querySimulationQuestions", function (req, res) {
+    let mnid = req.body.mnid;
     connection.query(
-      `select * from zjtm where zjid='${zjid}';`,
+      `select * from mntm where mnid='${mnid}';`,
       function (err, results) {
         return res.send({
           status: 200,
@@ -62,8 +62,8 @@ module.exports = function (app, connection) {
     );
   });
 
-  // 编辑单个题目
-  app.post("/editQuestion", function (req, res) {
+  // 编辑模拟单个题目
+  app.post("/editSimulationsQuestion", function (req, res) {
     let tmid = req.body.tmid;
     let analysis = req.body.analysis;
     let answer = req.body.answer;
@@ -71,7 +71,7 @@ module.exports = function (app, connection) {
     let title = req.body.title;
     let type = req.body.type;
     connection.query(
-      `update zjtm set analysis='${analysis}',answer='${answer}',type='${type}',options='${options}',title='${title}' where tmid='${tmid}';`,
+      `update mntm set analysis='${analysis}',answer='${answer}',type='${type}',options='${options}',title='${title}' where tmid='${tmid}';`,
       function (err, results) {
         return res.send({
           status: 200,
@@ -82,11 +82,11 @@ module.exports = function (app, connection) {
     );
   });
 
-  // 删除单个题目
-  app.post("/deleteQuestion", function (req, res) {
+  // 删除单个模拟题目
+  app.post("/deleteSimulationsQuestion", function (req, res) {
     let tmid = req.body.tmid;
     connection.query(
-      `DELETE FROM zjtm  where tmid='${tmid}'`,
+      `DELETE FROM mntm  where tmid='${tmid}'`,
       function (err, results) {
         return res.send({
           status: 200,
@@ -97,11 +97,11 @@ module.exports = function (app, connection) {
     );
   });
 
-  // 删除单个章节及章节下的题目
-  app.post("/deleteChapterAndQuestion", function (req, res) {
+  // 删除单个模拟及模拟下的题目
+  app.post("/deleteSimulationsAndQuestion", function (req, res) {
     let id = req.body.id;
     connection.query(
-      `DELETE FROM Chapters  where id='${id}';DELETE FROM zjtm  where zjid='${id}';`,
+      `DELETE FROM Simulation  where id='${id}';DELETE FROM mntm  where mnid='${id}';`,
       function (err, results) {
         return res.send({
           status: 200,
@@ -112,18 +112,18 @@ module.exports = function (app, connection) {
     );
   });
 
-  // 同一章节批量导入题目
-  app.post("/addQuestions", function (req, res) {
+  // 同一模拟批量导入题目
+  app.post("/addSimulationsQuestions", function (req, res) {
     let sql = '';
     req.body.map(item => {
-      let zjid = item.zjid;
+      let mnid = item.mnid;
       let analysis = item.analysis;
       let answer = item.answer;
       let options = item.option;
       let title = item.title;
       let type = item.type;
       let create_time = getTime();
-      sql += `INSERT INTO zjtm SET zjid='${zjid}',analysis='${analysis}',answer='${answer}',options='${options}',title='${title}',type='${type}',create_time='${create_time}';`
+      sql += `INSERT INTO mntm SET mnid='${mnid}',analysis='${analysis}',answer='${answer}',options='${options}',title='${title}',type='${type}',create_time='${create_time}';`
     })
     connection.query(sql ,function (err, results) {
         return res.send({

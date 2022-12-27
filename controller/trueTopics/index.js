@@ -1,10 +1,10 @@
 let { getTime } = require("../../utils/getTime");
 module.exports = function (app, connection) {
-  // 获取章节列表
-  app.post("/chaptersList", function (req, res) {
+  // 获取真题列表
+  app.post("/trueTopicList", function (req, res) {
     let grade = req.body.grade;
     connection.query(
-      `select * from Chapters where grade='${grade}';`,
+      `select * from TrueTopic where grade='${grade}';`,
       function (err, results) {
         return res.send({
           status: 200,
@@ -15,12 +15,12 @@ module.exports = function (app, connection) {
     );
   });
 
-  // 添加章节
-  app.post("/addChapter", function (req, res) {
+  // 添加真题
+  app.post("/addTrueTopic", function (req, res) {
     let grade = req.body.grade;
     let name = req.body.name;
     connection.query(
-      `INSERT INTO Chapters(create_time,grade,name) VALUES('${getTime()}','${grade}','${name}');`,
+      `INSERT INTO TrueTopic(create_time,grade,name) VALUES('${getTime()}','${grade}','${name}');`,
       function (err, results) {
         return res.send({
           status: 200,
@@ -31,12 +31,12 @@ module.exports = function (app, connection) {
     );
   });
 
-  // 编辑章节名称
-  app.post("/editChapterName", function (req, res) {
+  // 编辑真题名称
+  app.post("/editTrueTopicName", function (req, res) {
     let id = req.body.id;
     let name = req.body.name;
     connection.query(
-      `update Chapters set name='${name}' where id='${id}';`,
+      `update TrueTopic set name='${name}' where id='${id}';`,
       function (err, results) {
         return res.send({
           status: 200,
@@ -47,11 +47,11 @@ module.exports = function (app, connection) {
     );
   });
 
-  // 获取章节下的题目
-  app.post("/queryChapterQuestions", function (req, res) {
-    let zjid = req.body.zjid;
+  // 获取真题下的题目
+  app.post("/queryTrueTopicQuestions", function (req, res) {
+    let ztid = req.body.ztid;
     connection.query(
-      `select * from zjtm where zjid='${zjid}';`,
+      `select * from zttm where ztid='${ztid}';`,
       function (err, results) {
         return res.send({
           status: 200,
@@ -62,8 +62,8 @@ module.exports = function (app, connection) {
     );
   });
 
-  // 编辑单个题目
-  app.post("/editQuestion", function (req, res) {
+  // 编辑真题单个题目
+  app.post("/editTrueTopicsQuestion", function (req, res) {
     let tmid = req.body.tmid;
     let analysis = req.body.analysis;
     let answer = req.body.answer;
@@ -71,7 +71,7 @@ module.exports = function (app, connection) {
     let title = req.body.title;
     let type = req.body.type;
     connection.query(
-      `update zjtm set analysis='${analysis}',answer='${answer}',type='${type}',options='${options}',title='${title}' where tmid='${tmid}';`,
+      `update zttm set analysis='${analysis}',answer='${answer}',type='${type}',options='${options}',title='${title}' where tmid='${tmid}';`,
       function (err, results) {
         return res.send({
           status: 200,
@@ -82,11 +82,11 @@ module.exports = function (app, connection) {
     );
   });
 
-  // 删除单个题目
-  app.post("/deleteQuestion", function (req, res) {
+  // 删除单个真题题目
+  app.post("/deleteTrueTopicsQuestion", function (req, res) {
     let tmid = req.body.tmid;
     connection.query(
-      `DELETE FROM zjtm  where tmid='${tmid}'`,
+      `DELETE FROM zttm  where tmid='${tmid}'`,
       function (err, results) {
         return res.send({
           status: 200,
@@ -97,11 +97,11 @@ module.exports = function (app, connection) {
     );
   });
 
-  // 删除单个章节及章节下的题目
-  app.post("/deleteChapterAndQuestion", function (req, res) {
+  // 删除单个真题及真题下的题目
+  app.post("/deleteTrueTopicsAndQuestion", function (req, res) {
     let id = req.body.id;
     connection.query(
-      `DELETE FROM Chapters  where id='${id}';DELETE FROM zjtm  where zjid='${id}';`,
+      `DELETE FROM TrueTopic  where id='${id}';DELETE FROM zttm  where ztid='${id}';`,
       function (err, results) {
         return res.send({
           status: 200,
@@ -112,18 +112,18 @@ module.exports = function (app, connection) {
     );
   });
 
-  // 同一章节批量导入题目
-  app.post("/addQuestions", function (req, res) {
+  // 同一真题批量导入题目
+  app.post("/addTrueTopicsQuestions", function (req, res) {
     let sql = '';
     req.body.map(item => {
-      let zjid = item.zjid;
+      let ztid = item.ztid;
       let analysis = item.analysis;
       let answer = item.answer;
       let options = item.option;
       let title = item.title;
       let type = item.type;
       let create_time = getTime();
-      sql += `INSERT INTO zjtm SET zjid='${zjid}',analysis='${analysis}',answer='${answer}',options='${options}',title='${title}',type='${type}',create_time='${create_time}';`
+      sql += `INSERT INTO zttm SET ztid='${ztid}',analysis='${analysis}',answer='${answer}',options='${options}',title='${title}',type='${type}',create_time='${create_time}';`
     })
     connection.query(sql ,function (err, results) {
         return res.send({
