@@ -51,7 +51,7 @@ module.exports = function (app, connection) {
   app.post("/queryTrueTopicQuestions", function (req, res) {
     let ztid = req.body.ztid;
     connection.query(
-      `select * from zttm where ztid='${ztid}';`,
+      `select * from Questions where catalogType='2' and catalogId='${ztid}';`,
       function (err, results) {
         return res.send({
           status: 200,
@@ -71,7 +71,7 @@ module.exports = function (app, connection) {
     let title = req.body.title;
     let type = req.body.type;
     connection.query(
-      `update zttm set analysis='${analysis}',answer='${answer}',type='${type}',options='${options}',title='${title}' where tmid='${tmid}';`,
+      `update Questions set analysis='${analysis}',answer='${answer}',type='${type}',options='${options}',title='${title}' where tmid='${tmid}';`,
       function (err, results) {
         return res.send({
           status: 200,
@@ -86,7 +86,7 @@ module.exports = function (app, connection) {
   app.post("/deleteTrueTopicsQuestion", function (req, res) {
     let tmid = req.body.tmid;
     connection.query(
-      `DELETE FROM zttm  where tmid='${tmid}'`,
+      `DELETE FROM Questions  where tmid='${tmid}'`,
       function (err, results) {
         return res.send({
           status: 200,
@@ -101,7 +101,7 @@ module.exports = function (app, connection) {
   app.post("/deleteTrueTopicsAndQuestion", function (req, res) {
     let id = req.body.id;
     connection.query(
-      `DELETE FROM TrueTopic  where id='${id}';DELETE FROM zttm  where ztid='${id}';`,
+      `DELETE FROM TrueTopic  where id='${id}';DELETE FROM Questions  where catalogType='2' and catalogId='${id}';`,
       function (err, results) {
         return res.send({
           status: 200,
@@ -123,7 +123,7 @@ module.exports = function (app, connection) {
       let title = item.title;
       let type = item.type;
       let create_time = getTime();
-      sql += `INSERT INTO zttm SET ztid='${ztid}',analysis='${analysis}',answer='${answer}',options='${options}',title='${title}',type='${type}',create_time='${create_time}';`
+      sql += `INSERT INTO Questions SET catalogId='${ztid}',catalogType='2',analysis='${analysis}',answer='${answer}',options='${options}',title='${title}',type='${type}',create_time='${create_time}';`
     })
     connection.query(sql ,function (err, results) {
         return res.send({

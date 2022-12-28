@@ -3,7 +3,7 @@ module.exports = function (app, connection) {
   app.post("/delete/user", function (req, res) {
     let id = req.body.id;
     connection.query(
-      'DELETE FROM jwttest_user where id="' + id + '"',
+      'DELETE FROM User where id="' + id + '"',
       function (err, results, fields) {
         return res.send({
           status: 200,
