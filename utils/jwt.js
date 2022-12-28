@@ -12,7 +12,7 @@ const createToken = payload =>
 const jwtAuth = expressJwt({
   secret: secretKey,
   algorithms: ["HS256"],
-  credentialsRequired: true//  false：不校验
+  // credentialsRequired: true //这个是Token请求不进行解析和抛出异常，可以不设置这个
 }).unless({
   path: ["/users/login", "/apis/login", "/login"] //不需要校验的路径
 });

@@ -10,7 +10,7 @@ module.exports = function (app, connection) {
       })
       if (flag) {
         const time = new Date().getTime();
-        const tokenStr = createToken({username: userinfo.username});
+        const tokenStr = createToken({name: userinfo.username});
         return res.send({
           status: 200,
           message: '登录成功！',
