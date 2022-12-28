@@ -51,7 +51,7 @@ module.exports = function (app, connection) {
   app.post("/querySimulationQuestions", function (req, res) {
     let mnid = req.body.mnid;
     connection.query(
-      `select * from mntm where mnid='${mnid}';`,
+      `select * from Questions where catalogType='3' and catalogId='${mnid}';`,
       function (err, results) {
         return res.send({
           status: 200,
@@ -71,7 +71,7 @@ module.exports = function (app, connection) {
     let title = req.body.title;
     let type = req.body.type;
     connection.query(
-      `update mntm set analysis='${analysis}',answer='${answer}',type='${type}',options='${options}',title='${title}' where tmid='${tmid}';`,
+      `update Questions set analysis='${analysis}',answer='${answer}',type='${type}',options='${options}',title='${title}' where tmid='${tmid}';`,
       function (err, results) {
         return res.send({
           status: 200,
@@ -86,7 +86,7 @@ module.exports = function (app, connection) {
   app.post("/deleteSimulationsQuestion", function (req, res) {
     let tmid = req.body.tmid;
     connection.query(
-      `DELETE FROM mntm  where tmid='${tmid}'`,
+      `DELETE FROM Questions  where tmid='${tmid}'`,
       function (err, results) {
         return res.send({
           status: 200,
@@ -101,7 +101,7 @@ module.exports = function (app, connection) {
   app.post("/deleteSimulationsAndQuestion", function (req, res) {
     let id = req.body.id;
     connection.query(
-      `DELETE FROM Simulation  where id='${id}';DELETE FROM mntm  where mnid='${id}';`,
+      `DELETE FROM Simulation  where id='${id}';DELETE FROM Questions  where catalogType='3' and catalogId='${id}';`,
       function (err, results) {
         return res.send({
           status: 200,
@@ -123,7 +123,7 @@ module.exports = function (app, connection) {
       let title = item.title;
       let type = item.type;
       let create_time = getTime();
-      sql += `INSERT INTO mntm SET mnid='${mnid}',analysis='${analysis}',answer='${answer}',options='${options}',title='${title}',type='${type}',create_time='${create_time}';`
+      sql += `INSERT INTO Questions SET catalogId='${mnid}',catalogType='3',analysis='${analysis}',answer='${answer}',options='${options}',title='${title}',type='${type}',create_time='${create_time}';`
     })
     connection.query(sql ,function (err, results) {
         return res.send({

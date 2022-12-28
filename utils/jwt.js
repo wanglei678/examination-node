@@ -6,6 +6,7 @@ const expressJwt = require("express-jwt");
 const createToken = payload =>
   jwt.sign(payload, secretKey, {
     expiresIn: 60 * 60 * 24 // 设置token的有效期 单位（秒） 
+    // expiresIn: 10 // 测试使用 
   });
 
 // 验证 token
@@ -14,6 +15,6 @@ const jwtAuth = expressJwt({
   algorithms: ["HS256"],
   // credentialsRequired: true //这个是Token请求不进行解析和抛出异常，可以不设置这个
 }).unless({
-  path: ["/users/login", "/apis/login", "/login"] //不需要校验的路径
+  path: ["/users/login", "/apis/login", "/login", "/user/login"] //不需要校验的路径
 });
 module.exports = { jwtAuth, createToken };

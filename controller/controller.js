@@ -1,4 +1,5 @@
 let login = require('./login/login')
+let userLogin = require('./login/userLogin')
 let userList = require('./userList/index')
 let deleteUser = require('./deleteUser/index')
 let addUser = require('./addUser/index')
@@ -15,4 +16,5 @@ module.exports = function (app, connection) {
   trueTopics(app, connection)
   simulation(app, connection)
   denseVolume(app, connection)
+  userLogin(app, connection)
 }

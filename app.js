@@ -9,6 +9,7 @@ app.use(cors());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json())
 
+app.use(express.static(path.join(__dirname, './portal/dist')))
 app.use(jwtAuth);
 app.use((err, req, res, next) => {
   if (err.name === 'UnauthorizedError') {
@@ -22,7 +23,6 @@ app.use((err, req, res, next) => {
     message: '未知的错误',
   })
 })
-app.use(express.static(path.join(__dirname, './portal/dist')))
 
 const pool = mysql.createPool({
   host:"47.96.78.52",
