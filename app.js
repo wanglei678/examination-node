@@ -15,7 +15,7 @@ app.use((err, req, res, next) => {
   if (err.name === 'UnauthorizedError') {
     return res.send({
       status: 401,
-      message: '无效的token',
+      message: '登陆已超时或token不正确，请重新登陆！',
     })
   }
   res.send({
