@@ -21,15 +21,16 @@ module.exports = function (app, connection) {
       }
     )
   })
-  
+
   // 手机号查询用户信息
   app.post("/userInfo", function (req, res) {
     let phone = req.body.phone
     connection.query(
       `select * from User where phone='${phone}';`,
       function (err, results) {
-        results[0].map(item => delete item.password)
-        return res.send({ status: 200, message: "ok", data: results })
+        let res1 = results[0];
+        delete res1.password
+        return res.send({ status: 200, message: "ok", data: res1 })
       }
     )
   })
