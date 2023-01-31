@@ -5,7 +5,7 @@ const expressJwt = require("express-jwt");
 //生成 token
 const createToken = payload =>
   jwt.sign(payload, secretKey, {
-    expiresIn: 60 * 60 * 24 // 设置token的有效期 单位（秒） 
+    expiresIn: 60 * 60 * 24 * 7 // 设置token的有效期 单位（秒） 
     // expiresIn: 10 // 测试使用 
   });
 

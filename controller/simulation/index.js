@@ -134,4 +134,21 @@ module.exports = function (app, connection) {
       }
     );
   });
+
+  // 随机获取一套模拟题目
+  app.post("/getSimulationRandomly", function (req, res) {
+    let grade = req.body.grade;
+    connection.query(
+      `select * from Simulation where grade='${grade}';`,
+      function (err, results) {
+        let randomId = results[Math.floor((Math.random()*results.length))].id;
+        connection.query(
+          `select * from Questions where catalogType='3' and catalogId='${randomId}';`,
+          function (err, results1) {
+            return res.send({status: 200, message: "ok", data: results1});
+          }
+        );
+      }
+    );
+  });
 };
