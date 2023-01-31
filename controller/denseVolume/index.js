@@ -134,4 +134,21 @@ module.exports = function (app, connection) {
       }
     );
   });
+
+  // 随机获取一套密卷题目
+  app.post("/getDenseVolumeRandomly", function (req, res) {
+    let grade = req.body.grade;
+    connection.query(
+      `select * from DenseVolume where grade='${grade}';`,
+      function (err, results) {
+        let randomId = results[Math.floor((Math.random()*results.length))].id;
+        connection.query(
+          `select * from Questions where catalogType='4' and catalogId='${randomId}';`,
+          function (err, results1) {
+            return res.send({status: 200, message: "ok", data: results1});
+          }
+        );
+      }
+    );
+  });
 };

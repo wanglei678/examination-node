@@ -134,4 +134,21 @@ module.exports = function (app, connection) {
       }
     );
   });
+
+  // 随机获取一套真题题目
+  app.post("/getTrueTopicsRandomly", function (req, res) {
+    let grade = req.body.grade;
+    connection.query(
+      `select * from TrueTopic where grade='${grade}';`,
+      function (err, results) {
+        let randomId = results[Math.floor((Math.random()*results.length))].id;
+        connection.query(
+          `select * from Questions where catalogType='2' and catalogId='${randomId}';`,
+          function (err, results1) {
+            return res.send({status: 200, message: "ok", data: results1});
+          }
+        );
+      }
+    );
+  });
 };
