@@ -9,6 +9,7 @@ let simulation = require('./simulation/index')
 let denseVolume = require('./denseVolume/index')
 let changePwd = require('./changePwd/index')
 let operate = require('./operate/index')
+let examRecord = require('./examRecord/index')
 module.exports = function (app, connection) {
   login(app, connection)
   userLogin(app, connection)
@@ -21,4 +22,5 @@ module.exports = function (app, connection) {
   denseVolume(app, connection)
   changePwd(app, connection)
   operate(app, connection)
+  examRecord(app, connection)
 }
