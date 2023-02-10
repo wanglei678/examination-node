@@ -6,7 +6,7 @@ module.exports = function (app, connection) {
     connection.query(`select * from User where phone='${userinfo.phone}'`,function(err,results,fields){
       let flag = false;
       results.map(item => {
-        if (userinfo.password == item.password && (item.role == 'sutdent' || item.role == 'admin')) flag = true;
+        if (userinfo.password == item.password && (item.role == 'student' || item.role == 'admin')) flag = true;
       })
       if (flag) {
         const time = new Date().getTime();
