@@ -9,7 +9,7 @@ module.exports = function (app, connection) {
         return res.send({
           status: 200,
           message: "ok",
-          data: results
+          data: results,
         });
       }
     );
@@ -24,7 +24,7 @@ module.exports = function (app, connection) {
         return res.send({
           status: 200,
           message: "ok",
-          data: results
+          data: results,
         });
       }
     );
@@ -39,7 +39,7 @@ module.exports = function (app, connection) {
         return res.send({
           status: 200,
           message: "ok",
-          data: results
+          data: results,
         });
       }
     );
@@ -54,7 +54,7 @@ module.exports = function (app, connection) {
         return res.send({
           status: 200,
           message: "ok",
-          data: results
+          data: results,
         });
       }
     );
@@ -69,7 +69,7 @@ module.exports = function (app, connection) {
         return res.send({
           status: 200,
           message: "ok",
-          data: results
+          data: results,
         });
       }
     );
@@ -84,7 +84,7 @@ module.exports = function (app, connection) {
         return res.send({
           status: 200,
           message: "ok",
-          data: results
+          data: results,
         });
       }
     );
@@ -99,7 +99,7 @@ module.exports = function (app, connection) {
         return res.send({
           status: 200,
           message: "ok",
-          data: results
+          data: results,
         });
       }
     );
@@ -107,19 +107,50 @@ module.exports = function (app, connection) {
 
   // 同一章节批量导入题目
   app.post("/addQuestions", function (req, res) {
-    let sql = '';
-    req.body.map(item => {
+    let sql = "";
+    req.body.map((item) => {
       let { zjid, analysis, answer, option, title, type } = item;
       let create_time = getTime();
-      sql += `INSERT INTO Questions SET catalogId='${zjid}',catalogType='1',analysis='${analysis}',answer='${answer}',options='${option}',title='${title}',type='${type}',create_time='${create_time}';`
-    })
-    connection.query(sql ,function (err, results) {
+      sql += `INSERT INTO Questions SET catalogId='${zjid}',catalogType='1',analysis='${analysis}',answer='${answer}',options='${option}',title='${title}',type='${type}',create_time='${create_time}';`;
+    });
+    connection.query(sql, function (err, results) {
+      return res.send({
+        status: 200,
+        message: "ok",
+        data: results,
+      });
+    });
+  }); 
+  
+  // 获取章节下的基础知识题目
+  app.post("/queryBaseQuestions", function (req, res) {
+    let { zjid } = req.body;
+    connection.query(
+      `select * from Questions where catalogType='0' and catalogId='${zjid}';`,
+      function (err, results) {
         return res.send({
           status: 200,
           message: "ok",
-          data: results
+          data: results,
         });
       }
     );
+  });
+
+  // 基础知识章节批量导入题目
+  app.post("/addBaseChapterQuestions", function (req, res) {
+    let sql = "";
+    req.body.map((item) => {
+      let { zjid, analysis, answer, option, title, type } = item;
+      let create_time = getTime();
+      sql += `INSERT INTO Questions SET catalogId='${zjid}',analysis='${analysis}',answer='${answer}',options='${option}',title='${title}',type='${type}',create_time='${create_time}',catalogType='0';`;
+    });
+    connection.query(sql, function (err, results) {
+      return res.send({
+        status: 200,
+        message: "ok",
+        data: results,
+      });
+    });
   });
 };
