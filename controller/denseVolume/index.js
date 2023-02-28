@@ -9,7 +9,7 @@ module.exports = function (app, connection) {
         return res.send({
           status: 200,
           message: "ok",
-          data: results
+          data: results,
         });
       }
     );
@@ -25,7 +25,7 @@ module.exports = function (app, connection) {
         return res.send({
           status: 200,
           message: "ok",
-          data: results
+          data: results,
         });
       }
     );
@@ -41,7 +41,7 @@ module.exports = function (app, connection) {
         return res.send({
           status: 200,
           message: "ok",
-          data: results
+          data: results,
         });
       }
     );
@@ -56,7 +56,7 @@ module.exports = function (app, connection) {
         return res.send({
           status: 200,
           message: "ok",
-          data: results
+          data: results,
         });
       }
     );
@@ -76,7 +76,7 @@ module.exports = function (app, connection) {
         return res.send({
           status: 200,
           message: "ok",
-          data: results
+          data: results,
         });
       }
     );
@@ -91,7 +91,7 @@ module.exports = function (app, connection) {
         return res.send({
           status: 200,
           message: "ok",
-          data: results
+          data: results,
         });
       }
     );
@@ -106,7 +106,7 @@ module.exports = function (app, connection) {
         return res.send({
           status: 200,
           message: "ok",
-          data: results
+          data: results,
         });
       }
     );
@@ -114,8 +114,8 @@ module.exports = function (app, connection) {
 
   // 同一密卷批量导入题目
   app.post("/addDenseVolumesQuestions", function (req, res) {
-    let sql = '';
-    req.body.map(item => {
+    let sql = "";
+    req.body.map((item) => {
       let mjid = item.mjid;
       let analysis = item.analysis;
       let answer = item.answer;
@@ -123,29 +123,90 @@ module.exports = function (app, connection) {
       let title = item.title;
       let type = item.type;
       let create_time = getTime();
-      sql += `INSERT INTO Questions SET catalogId='${mjid}',catalogType='4',analysis='${analysis}',answer='${answer}',options='${options}',title='${title}',type='${type}',create_time='${create_time}';`
-    })
-    connection.query(sql ,function (err, results) {
-        return res.send({
-          status: 200,
-          message: "ok",
-          data: results
-        });
-      }
-    );
+      sql += `INSERT INTO Questions SET catalogId='${mjid}',catalogType='4',analysis='${analysis}',answer='${answer}',options='${options}',title='${title}',type='${type}',create_time='${create_time}';`;
+    });
+    connection.query(sql, function (err, results) {
+      return res.send({
+        status: 200,
+        message: "ok",
+        data: results,
+      });
+    });
   });
 
-  // 随机获取一套密卷题目
+  // 随机获取一套模拟题目
   app.post("/getDenseVolumeRandomly", function (req, res) {
     let grade = req.body.grade;
+    let arr = [];
     connection.query(
-      `select * from DenseVolume where grade='${grade}';`,
+      `select * from Questions where catalogType='0'`,
       function (err, results) {
-        let randomId = results[Math.floor((Math.random()*results.length))].id;
+        arr = [].concat(results);
         connection.query(
-          `select * from Questions where catalogType='4' and catalogId='${randomId}';`,
-          function (err, results1) {
-            return res.send({status: 200, message: "ok", data: results1});
+          `select * from Chapters where grade='${grade}'`,
+          function (err, results) {
+            let sql = "";
+            results.map((item) => {
+              const { id } = item;
+              sql += `select * from Questions where catalogType='1' and catalogId='${id}';`;
+            });
+            connection.query(sql, function (err, resp) {
+              resp.map((item) => {
+                if (item && item.length > 0) {
+                  arr = arr.concat(item);
+                }
+              });
+              const single = arr.filter((item) =>
+                ["选择题", "单选题"].includes(item.type)
+              );
+              const multi = arr.filter((item) =>
+                ["多选题"].includes(item.type)
+              );
+              const judge = arr.filter((item) =>
+                ["判断题"].includes(item.type)
+              );
+              let singleIndex = [],
+                multiIndex = [],
+                judgeIndex = [];
+              let singleResp = [],
+                multiResp = [],
+                judgeResp = [];
+              for (let index = 0; index < 1000; index++) {
+                const i = Math.ceil(Math.random() * single.length);
+                if (!singleIndex.includes(i)) {
+                  singleResp.push(single[i]);
+                  singleIndex.push(i);
+                }
+                if (singleIndex.length == 100) {
+                  break;
+                }
+              }
+              for (let index = 0; index < 400; index++) {
+                const i = Math.ceil(Math.random() * multi.length);
+                if (!multiIndex.includes(i)) {
+                  multiResp.push(multi[i]);
+                  multiIndex.push(i);
+                }
+                if (multiIndex.length == 40) {
+                  break;
+                }
+              }
+              for (let index = 0; index < 600; index++) {
+                const i = Math.ceil(Math.random() * judge.length);
+                if (!judgeIndex.includes(i)) {
+                  judgeResp.push(judge[i]);
+                  judgeIndex.push(i);
+                }
+                if (judgeIndex.length == 60) {
+                  break;
+                }
+              }
+              return res.send({
+                status: 200,
+                message: "ok",
+                data: [...singleResp, ...multiResp, ...judgeResp],
+              });
+            });
           }
         );
       }
